@@ -6,7 +6,7 @@ const campaignRoutes = require('./routes/campaigns');
 const emailRoutes = require('./routes/emails');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000; // Ensuring the app listens on port 4000 when running locally or the Heroku port when deployed
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
