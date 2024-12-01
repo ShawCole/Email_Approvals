@@ -1,18 +1,39 @@
+// /routes/campaigns.js
 const express = require('express');
+const Campaign = require('../models/campaign');
 const router = express.Router();
 
-// Example route to get all campaigns
-router.get('/', (req, res) => {
-  // TODO: Fetch campaigns from database
-  res.json({ campaigns: [] });
+// POST route to create a new campaign
+router.post('/api/campaign', async (req, res) => {
+  const { userId, campaignName, startDate, endDate, status, budget } = req.body;
+  
+  try {
+    const newCampaign = new Campaign({
+      userId,
+      campaignName,
+      startDate,
+      endDate,
+      status,
+      budget,
+    });
+
+    const savedCampaign = await newCampaign.save();
+    res.status(201).json(savedCampaign);
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving campaign', error });
+  }
 });
 
-// Example route to create a new campaign
-router.post('/', (req, res) => {
-  const { name, tags } = req.body;
-
-  // TODO: Add logic to create a new campaign
-  res.json({ message: 'Campaign created successfully', name, tags });
+// GET route to fetch campaigns for a specific user
+router.get('/api/campaigns/:userId', async (req, res) => {
+  const { userId } = req.params;
+  
+  try {
+    const campaigns = await Campaign.find({ userId });
+    res.status(200).json(campaigns);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching campaigns', error });
+  }
 });
 
 module.exports = router;

@@ -1,28 +1,34 @@
-require('dotenv').config();
+// /index.js
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const campaignRoutes = require('./routes/campaigns');
-const emailRoutes = require('./routes/emails');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const campaignRoutes = require('./routes/campaigns');  // Add this line to import campaign routes
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 4000; // Ensuring the app listens on port 4000 when running locally or the Heroku port when deployed
+app.use(cors());
+app.use(express.json());  // Middleware to parse incoming JSON requests
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Use campaign routes
+app.use(campaignRoutes);
 
-// Middleware
-app.use(express.json());
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+  }
+};
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/campaigns', campaignRoutes);
-app.use('/api/emails', emailRoutes);
+connectDB();
 
-// Default Route
-app.get('/', (req, res) => res.send('Backend is running!'));
-
-// Start Server
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
