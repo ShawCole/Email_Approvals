@@ -1,0 +1,16 @@
+# macOS system files
+.DS_Store
+.Trash
+
+# Node.js modules
+node_modules/
+
+# Logs
+*.log
+
+# IDE and editor settings
+.idea/
+.vscode/
+
+# Environment variables
+.env
